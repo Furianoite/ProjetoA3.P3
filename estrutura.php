@@ -103,26 +103,27 @@ function realizarAnaliseLexica($codigo, $linguagem) {
             break;
         case 'python':
             $padraoPalavrasChave = "/\b(if|else|for|while|def|class|import|elif|try|except|finally)\b/";
-            $padraoIdentificadores = "/\b(?!(if|else|for|while|print|def|class|import|elif|try|except|finally))\b[a-zA-Z_][a-zA-Z0-9_]*\b/";
+            $padraoIdentificadores = '/(?<![a-zA-Z0-9_])\b(?!(if|else|for|while|print|def|class|import|elif|try|except|finally|in|switch|case|condi|o|__name__|__main__|and|or|not)\b)[a-zA-Z_][a-zA-Z0-9_]*(?=\s|\(|\b)/';
             $padraoOperadores = "/[\+\-\*\/=<>]|and|or|not/";
             $padraoDelimitadores = "/[\(\)\{\}\[\]\.,;]/";
             break;
         case 'java':
             $padraoPalavrasChave = "/\b(if|else|for|while|do|break|class|public|private|static|void|interface|extends|implements|this|super)\b/";
-            $padraoIdentificadores = "/\b(?!(if|else|for|while|do|break|class|public|private|static|void|interface|extends|implements|this|super|System|out|println|printStream))\b[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\b/";
+            $padraoIdentificadores = "/\b(?!(if|else|for|while|do|break|class|public|private|static|void|interface|extends|implements|this|super|System|out|println|printStream|import|new|int|String|Scanner|switch|case|default|main|args|print|in|nextInt|case|java|util))\b[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\b/";
             $padraoOperadores = "/[\+\-\*\/=<>]|&&|\|\|/";
             $padraoDelimitadores = "/[\(\)\{\}\[\]\.,;]/";
-    break;
+            break;
         default:
             echo "Linguagem não suportada.";
             return;
     }
-            
+   
     $codigoSemStrings = preg_replace('/".*?"/', '', $codigo);
-
-    preg_match_all($padraoIdentificadores, $codigoSemStrings, $identificadoresEncontrados);
+   
+    $codigoSemStringsOuComentarios = preg_replace(array('/".*?"/', "/'.*?'/", "/#.*?\n/"), '', $codigoSemStrings);
+    
+    preg_match_all($padraoIdentificadores, $codigoSemStringsOuComentarios, $identificadoresEncontrados);
     preg_match_all($padraoPalavrasChave, $codigo, $palavrasChaveEncontradas);
-    preg_match_all($padraoIdentificadores, $codigo, $identificadoresEncontrados);
     preg_match_all($padraoOperadores, $codigo, $operadoresEncontrados);
     preg_match_all($padraoDelimitadores, $codigo, $delimitadoresEncontrados);
 
